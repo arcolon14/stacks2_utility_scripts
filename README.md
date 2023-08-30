@@ -65,6 +65,23 @@ $ python3 sumstats_to_whitelist.py \
   --write-random-snp                     # Export only a single site per locus
 ```
 
+### Output
+
+Output is a STACKS whitelist file, as specified in the [documentation](https://catchenlab.life.illinois.edu/stacks/manual/#wl). File has two columns: `<locus_id><tab><column>`
+
+```sh
+8<tab>148
+80    14
+92    321
+113   15
+195   89
+199   10
+200   137
+203   81
+204   255
+270   84
+```
+
 ## Calculate per-individual heterozygosity
 
 Calculate heterozygosity per-individuals including variant and invariant sites using the `populations.all.vcf` from POPULATIONS.
@@ -92,4 +109,64 @@ options:
 $ python3 calculate_idnv_obs_het.py \
     --vcf populations.all.vcf \   # Path to all-sites VCF
     --outdir het_output/          # Path to output
+```
+
+### Output
+
+```sh
+#indv_id   num_total_sites  num_total_var_sites  num_sites_in_indv  num_var_sites_in_indv  num_hets_in_indv  prop_hets_total_indv_sites  prop_hets_indv_var_sites
+sample_01  6366             19                   4104               19                     7                 0.00170565                  0.36842105
+sample_02  6366             19                   3319               15                     0                 0.00000000                  0.00000000
+sample_03  6366             19                   3358               12                     1                 0.00029780                  0.08333333
+sample_04  6366             19                   3529               19                     0                 0.00000000                  0.00000000
+sample_05  6366             19                   4295               19                     3                 0.00069849                  0.15789474
+sample_06  6366             19                   3892               19                     0                 0.00000000                  0.00000000
+sample_07  6366             19                   4135               19                     8                 0.00193470                  0.42105263
+sample_08  6366             19                   3944               19                     7                 0.00177485                  0.36842105
+sample_09  6366             19                   3261               16                     4                 0.00122662                  0.25000000
+```
+
+## Extract GSTACKS catalog counts
+
+For a given locus in the GSTACKS `catalog.calls` file, extract counts of read and nucleotide per-sites, as well as genotype model outputs. This is intended as a troubleshooting and development script (e.g., exploring the behavior of the genotyping model). The program likely has limited application for other uses.
+
+### Usage
+
+```sh
+$ python3 extract_catalog_ng_cnts.py -h
+usage: extract_catalog_ng_cnts.py [-h] --catalog CATALOG --locus-id LOCUS_ID [--outdir OUTDIR]
+
+Extract the read count and genotype information for a specific locus in the gstacks catalog.calls file.
+
+options:
+  -h, --help           show this help message and exit
+  --catalog CATALOG    Path to the GSTACKS catalog.calls file
+  --locus-id LOCUS_ID  ID of target locus to export the site.
+  --outdir OUTDIR      Path to output directory
+```
+
+### Example
+
+```sh
+$ python3 extract_catalog_ng_cnts.py \
+    --catalog catalog.calls \           # Path to catalog file
+    --outdir . \                        # Path to output directory
+    --locus-id 11235                    # ID of locus of interest        
+```
+
+### Output
+
+Example of output table:
+
+```sh
+snp       ref  alt  af       totCnts     sample     gt   gq  lnl_MM  lnl_Mm  lnl_mm   cntA  cntC  cntG  cntT
+11235_42  T    G    0.00495  0,0,6,1205  sample_01  0/0  40  -0.0    -10.62  -133.33  0     0     0     30
+11235_42  T    G    0.00495  0,0,6,1205  sample_02  0/0  40  -0.0    -10.02  -124.56  0     0     0     28
+11235_42  T    G    0.00495  0,0,6,1205  sample_03  0/0  40  -0.0    -6.71   -76.33   0     0     0     17
+11235_42  T    G    0.00495  0,0,6,1205  sample_04  0/0  40  -0.0    -5.81   -63.18   0     0     0     14
+11235_42  T    G    0.00495  0,0,6,1205  sample_05  0/0  40  -0.0    -7.31   -85.1    0     0     0     19
+11235_42  T    G    0.00495  0,0,6,1205  sample_06  0/0  40  -0.0    -10.62  -133.33  0     0     0     30
+11235_42  T    G    0.00495  0,0,6,1205  sample_07  0/0  40  -0.0    -4.6    -45.64   0     0     0     10
+11235_42  T    G    0.00495  0,0,6,1205  sample_08  0/0  40  -0.0    -5.81   -63.18   0     0     0     14
+11235_42  T    G    0.00495  0,0,6,1205  sample_09  0/0  40  -0.0    -8.21   -98.25   0     0     0     22
 ```
