@@ -11,7 +11,7 @@ def parse_args():
     desc = '''Extract the read count and genotype information for a specific locus in the gstacks catalog.calls file.'''
     p = argparse.ArgumentParser(prog=PROG, description=desc)
     p.add_argument('--catalog', required=True, help='Path to the GSTACKS catalog.calls file')
-    p.add_argument('--locus-id', required=True, type=int, default='ID of target locus to export the site.')
+    p.add_argument('--locus-id', required=True, type=int, help='ID of target locus to export the site.')
     p.add_argument('--outdir', required=False, default='.', help='Path to output directory')
     args = p.parse_args()
     args.outdir = args.outdir.rstrip('/')
