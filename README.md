@@ -8,7 +8,7 @@ Filter the variant sites from a `populations` SUMSTATS file to generate a whitel
 ### Usage:
 
 ```sh
-$ ./sumstats_to_whitelist.py -h
+$ python3 sumstats_to_whitelist.py -h
 
 usage: sumstats_to_whitelist.py [-h] -s SUMSTATS [-o OUTD] [-p MIN_POPS] [-r MIN_PERC_INDV]
                                 [-i MIN_NUM_INDV] [-n NUMBER_SITES] [-e] [-a HWE_ALPHA]
@@ -55,7 +55,7 @@ options:
 ### Example
 
 ```sh
-python3 sumstats_to_whitelist.py \
+$ python3 sumstats_to_whitelist.py \
   --sumstats populations.sumstats.tsv \  # Path to POPULATIONS SUMSTATS file
   --min-pops 5 \                         # Min 5 populations to keep a site
   --min-perc-indv 0.8 \                  # Min 80% samples per pop to keep a site
@@ -63,4 +63,33 @@ python3 sumstats_to_whitelist.py \
   --max-obs-het 0.8 \                    # Max observed heterozygosity of 80% to keep a site
   --number-sites 2000 \                  # Export 2000 sites
   --write-random-snp                     # Export only a single site per locus
+```
+
+## Calculate per-individual heterozygosity
+
+Calculate heterozygosity per-individuals including variant and invariant sites using the `populations.all.vcf` from POPULATIONS.
+
+### Usage
+
+```sh
+$ python3 calculate_idnv_obs_het.py -h
+usage: calculate_idnv_obs_het.py [-h] [-v VCF] [-o OUTDIR]
+
+Supply a populationns.all.vcf for a set of individuals and calculate the observed
+heterozygosity, i.e., the proportion of heterozygous sites across all the
+genotyped sites.
+
+options:
+  -h, --help            show this help message and exit
+  -v VCF, --vcf VCF     (str) Path to populations.all.vcf
+  -o OUTDIR, --outdir OUTDIR
+                        (str) Path to output directory
+```
+
+### Example
+
+```sh
+$ python3 calculate_idnv_obs_het.py \
+    --vcf populations.all.vcf \   # Path to all-sites VCF
+    --outdir het_output/          # Path to output
 ```
