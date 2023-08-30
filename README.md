@@ -3,7 +3,7 @@ Some utility scripts for processing and filtering data generated using the Stack
 
 ## Sumstats to whitelist
 
-Filter the variant sites from a `populations` SUMSTATS file to generate a whitelist for future runs.
+Filter the variant sites from a POPULATIONS `populations.sumstats.tsv` file to generate a whitelist for future runs.
 
 ### Usage:
 
@@ -212,4 +212,46 @@ $ python3 calc_gstacks_coverage.py \
 572   1.027679   0.616667   1.149575   37729   0.000609  0.558289      0.254542
 573   1.017073   0.600000   1.138907   37565   0.000561  0.560004      0.253805
 574   1.005943   0.600000   1.128170   37428   0.000537  0.562528      0.253439
+```
+
+## Insert size histogram
+
+Generate a histogram describing the insert size distribution in the STACKS catalog. Uses from the `gstacks.details.gz` file generating by using the `--details` option in GSTACKS. File writen by Nicolas Rochette.
+
+### Usage
+
+```sh
+$ python3 insert_size_hist.py
+Usage:
+  {} gstacks.details.gz
+
+Creates a histogram of insert sizes, according to the aln_matrix section. Outputs
+to `gstacks.details.ins_z.tsv`.
+```
+
+### Example
+
+```sh
+$ python3 insert_size_hist.py /path/to/gstacks.details.gz
+```
+
+### Output
+
+The output table describes:
+1. `ins_z`: insert size in bp
+2. `n_pairs`: number of read pairs of that size
+
+```sh
+ins_z   n_pairs
+1       0
+2       0
+3       0
+4       0
+5       0
+...
+348     58957
+349     55692
+350     180962
+351     45265
+352     39688
 ```
