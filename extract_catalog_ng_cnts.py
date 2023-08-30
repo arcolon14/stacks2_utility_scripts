@@ -1,17 +1,35 @@
 #!/usr/bin/env python3
-import sys, os, gzip
+import sys, os, gzip, argparse
+# (c) 2023 Angel G. Rivera-Colon
 
-invcf = sys.argv[1]
-outdir = sys.argv[2]
+PROG = sys.argv[0].split('/')[-1]
+
+#
+# Command line options
+#
+def parse_args():
+    desc = '''Extract the read count and genotype information for a specific locus in the gstacks catalog.calls file.'''
+    p = argparse.ArgumentParser(prog=PROG, description=desc)
+    p.add_argument('--catalog', required=True, help='Path to the GSTACKS catalog.calls file')
+    p.add_argument('--locus-id', required=True, type=int, default='ID of target locus to export the site.')
+    p.add_argument('--outdir', required=False, default='.', help='Path to output directory')
+    args = p.parse_args()
+    args.outdir = args.outdir.rstrip('/')
+    assert os.path.exists(args.outdir), f'Error: {args.outdir} does not exist.'
+    assert os.path.exists(args.catalog), f'Error: {args.catalog} does not exist.'
+    assert args.locus_id > 0, f'Error: locus-id ({args.locus_id}) must be > 0.'
+    return args
 
 def main():
+    args = parse_args()
     # Prepare output
-    outf = open(f'{outdir}/gstacks_bgc_stats.tsv', 'w')
+    outf = open(f'{args.outdir}/gstacks_bgc_stats.tsv', 'w')
     outf.write('snp\tref\talt\taf\ttotCnts\tsample\tgt\tgq\tlnl_MM\tlnl_Mm\tlnl_mm\tcntA\tcntC\tcntG\tcntT\n')
     samples = list()
     site_cnts = dict()
+    loc_found = False
     # Parse input catalog VCF
-    with gzip.open(invcf, 'rt') as fh:
+    with gzip.open(args.catalog, 'rt') as fh:
         for i, line in enumerate(fh):
             if line.startswith('##'):
                 continue
@@ -21,6 +39,11 @@ def main():
                 continue
             fields = line.strip('\n').split('\t')
             locus = int(fields[0])
+            # Skip all the unwanted loci
+            if locus != args.locus_id:
+                continue
+            else:
+                loc_found = True
             col = int(fields[1])
             ref = fields[3]
             alt = fields[4]
@@ -55,14 +78,8 @@ def main():
                     nt_cnt = ntcounts[j]
                     site_cnts[snp][nt] += nt_cnt
     outf.close()
-    for snp in site_cnts:
-        cnts = site_cnts[snp]
-        row = f'{snp}'
-        for nt in sorted(cnts):
-            cnt = cnts[nt]
-            row += f'\t{cnt}'
-        print(row)
-
+    if not loc_found:
+        sys.exit(f'Error: specified locus ({args.locus_id}) was never found in the input catalog.calls file.')
 
 # Run Code
 if __name__ == '__main__':
