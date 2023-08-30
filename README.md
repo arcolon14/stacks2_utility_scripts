@@ -128,7 +128,7 @@ sample_09  6366             19                   3261               16          
 
 ## Extract GSTACKS catalog counts
 
-For a given locus in the GSTACKS `catalog.calls` file, extract counts of read and nucleotide per-sites, as well as genotype model outputs. This is intended as a troubleshooting and development script (e.g., exploring the behavior of the genotyping model). The program likely has limited application for other uses.
+For a given locus in the GSTACKS `catalog.calls` file, extract counts of read and nucleotide per-sites, as well as genotype model outputs. This script was desiged for troubleshooting and development (e.g., exploring the behavior of the genotyping model). The program likely has limited application for other uses.
 
 ### Usage
 
@@ -169,4 +169,47 @@ snp       ref  alt  af       totCnts     sample     gt   gq  lnl_MM  lnl_Mm  lnl
 11235_42  T    G    0.00495  0,0,6,1205  sample_07  0/0  40  -0.0    -4.6    -45.64   0     0     0     10
 11235_42  T    G    0.00495  0,0,6,1205  sample_08  0/0  40  -0.0    -5.81   -63.18   0     0     0     14
 11235_42  T    G    0.00495  0,0,6,1205  sample_09  0/0  40  -0.0    -8.21   -98.25   0     0     0     22
+```
+
+## Calculate catalog coverage
+
+Calculate the per-site coverage distribution from a GSTACKS catalog.calls file. This script was desiged for troubleshooting and development and may have limited application for other uses.
+
+### Usage
+
+```sh
+$ python3 calc_gstacks_coverage.py -h
+usage: calc_gstacks_coverage.py [-h] -c CATALOG_CALLS [-o OUT_DIR]
+
+Calculate the average-per site coverage distribution from a raw GSTACKS catalog.calls file
+
+options:
+  -h, --help            show this help message and exit
+  -c CATALOG_CALLS, --catalog-calls CATALOG_CALLS   GSTACKS `catalog.calls` file.
+  -o OUT_DIR, --out-dir OUT_DIR   Output directory.
+```
+
+### Example
+
+```sh
+$ python3 calc_gstacks_coverage.py \
+    --catalog-calls catalog.calls \   # Path to GSTACKS catalog.calls file
+    --out-dir .                       # Path to outpit directory
+```
+
+### Output
+
+```sh
+#pos  avg_cov    med_cov    sd_cov     n_loci  f_var     avg_miss_gen  sd_miss_geno
+0     26.421443  25.950000  15.176338  45636   0.000000  0.182154      0.237802
+1     26.421975  25.950000  15.176499  45636   0.000007  0.182150      0.237802
+2     26.422181  25.950000  15.176585  45636   0.000003  0.182148      0.237797
+3     26.420613  25.950000  15.175916  45636   0.000000  0.182152      0.237799
+4     26.418829  25.950000  15.176294  45636   0.000003  0.182178      0.237808
+...
+570   1.049830   0.633333   1.170826   38030   0.000649  0.553804      0.255442
+571   1.039204   0.616667   1.160621   37865   0.000604  0.555897      0.255079
+572   1.027679   0.616667   1.149575   37729   0.000609  0.558289      0.254542
+573   1.017073   0.600000   1.138907   37565   0.000561  0.560004      0.253805
+574   1.005943   0.600000   1.128170   37428   0.000537  0.562528      0.253439
 ```
