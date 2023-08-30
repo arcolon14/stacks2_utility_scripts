@@ -255,3 +255,9 @@ ins_z   n_pairs
 351     45265
 352     39688
 ```
+
+## Author
+
+**Angel G. Rivera-Colon**<sup>1,2</sup>  
+<sup>1</sup>Institute of Ecology and Evolution, University of Oregon, Eugene, OR, USA <ariverac@uoregon.edu>
+<sup>2</sup>Department of Evolution, Ecology, and Behavior, University of Illinois at Urbana-Champaign, Urbana, IL, USA <angelgr2@illinois.edu>
