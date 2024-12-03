@@ -304,6 +304,74 @@ Locus_id  Chrom   Basepair  TajimasD
 142       chr1    313116    -0.96078502
 ```
 
+## Phasing RADseq haplotypes
+
+Phase the haplotypes of the adjacent RADtags using the `phase_rad_loci.py` script.
+
+### Basic usage
+
+The script takes the default haplotype VCF (`populations.haps.vcf`) and loci FASTA (`populations.loci.fa`), phases the haplotypes with `PHASE` and generates a new VCF containin the new phased sequence and a FASTA of the merged loci. These input files *must* be generated from a reference-based STACKS catalog, as the genomic coordinates are used to determine adjacent tags.
+
+The script filters both the input and output sequence. For the input, `phase_rad_loci.py` can remove haploptypes with more than a given number of variant sites (`--max-sites-in-hap`) as well as loci with more than a specified number of alleles (`--max-alleles-in-loc`). For the output, the script can filter individuals at a locus based on their phased probability (`--min-phase-prob`), and can remove loci with a low proportion of phased samples (`--min-number-samples`).
+
+The main dependency of the script is the program `PHASE` ([Stephens et al. 2001](https://doi.org/10.1086/319501)), which is available from: <https://stephenslab.uchicago.edu/phase/download.html>.
+
+### Usage
+
+```
+$ phase_rad_loci.py -h
+
+  phase_rad_loci.py
+
+  -h, --help            show this help message and exit
+  -v STACKS_HAPS_VCF, --stacks-haps-vcf STACKS_HAPS_VCF
+                        Stacks haplotypes VCF (compatible with v2.57 or
+                        higher).
+  -l STACKS_LOCI_FASTA, --stacks-loci-fasta STACKS_LOCI_FASTA
+                        Stacks loci FASTA.
+  -o OUT_DIR, --out-dir OUT_DIR
+                        Output directory.
+  --run-name RUN_NAME   (str) Name of current run. Defaults to datetime.
+  -e RES_ENZYME, --res-enzyme RES_ENZYME
+                        (str) Restriction enzyme.
+  -s MAX_SITES_IN_HAP, --max-sites-in-hap MAX_SITES_IN_HAP
+                        (int) Max number of sites in a haplotype.
+  -a MAX_ALLELES_IN_LOC, --max-alleles-in-loc MAX_ALLELES_IN_LOC
+                        (int) Max number of alleles in a locus.
+  -x PHASE_EXE_PATH, --phase-exe-path PHASE_EXE_PATH
+                        (str) Path to PHASE executable. Default `PHASE`.
+  -r MIN_NUMBER_SAMPLES, --min-number-samples MIN_NUMBER_SAMPLES
+                        (float) Minumim percentage of phased samples needed to
+                        retain a locus.
+  -p MIN_PHASE_PROB, --min-phase-prob MIN_PHASE_PROB
+                        (float) Minimum phasing probability required to keep a
+                        haplotype.
+  --phase-dry-run       Run with existing PHASE output.
+  --keep-single-tags    Keep haplotypes/loci for single (unpaired) tags.
+  --delete-phase-outs   Delete the output files from the individual PHASE
+                        runs.
+```
+
+### Example
+
+```sh
+phase_rad_loci.py
+    --stacks-haps-vcf populations.haps.vcf \   # Path to POPULATIONS haplotype VCF
+    --stacks-loci-fasta populations.loci.fa \  # Path to POPULATIONS loci FASTA
+    --out-dir output_dir/ \                    # Path to output directory
+    --res-enzyme 'sbfI' \                      # Restriction enzyme, SbfI
+    --phase-exe-path /path/to/PHASE \          # Path to the PHASE executable
+    --max-sites-in-hap 25 \                    # Max of 25 variant sites in the input haplotypes
+    --max-alleles-in-loc 40 \                  # Max of 40 alleles seen at an input locus
+    --run-name 'example_run' \                 # Name of the current run, basename of outputs    
+    --min-number-samples 0.8 \                 # Keep loci with 80% of samples after phasing
+    --min-phase-prob 0.9                       # Only keep haplotypes of phased with at least 90% probability                  
+```
+
+### Output
+
+After phasing, the new ID of the phased loci is the merge of the two adjacent tags. So if in the original STACKS catalog, loci `123` and loci `124` are adjacent to one another in the genome (i.e., they share the same restriction cutsite), they will be merged into a new phased locus, `123_124`. This new name will be propagated to all the outputs.
+
 ## Author
 
 **Angel G. Rivera-Colon**<sup>1,2</sup>  
