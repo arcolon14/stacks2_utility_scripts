@@ -178,7 +178,7 @@ class FiltParams:
         if self.ninds is not None:
             log_str += f'    Min number of individuals per pop: {self.ninds}\n'
         if self.hwe:
-            log_str += f'    Removing loci out of HWE per pop (p-value cutoff {self.alpha:.6f})\n'
+            log_str += f'    Removing loci out of HWE per pop (p-value cutoff {self.alpha:.6g})\n'
         if self.maf is not None:
             log_str += f'    Min minor allele frequency (MAF): {self.maf:.6g}\n'
         if self.mac is not None:
@@ -283,7 +283,7 @@ def parse_sumstats(sumstats_f, filt_opts):
                 warnings.warn('HWE P-value is \'-1.00000\'. The --hwe was not added to populations. Skipping HWE filtering.')
                 filt_opts.hwe = False
                 hwe_p = 1.0
-            if hwe_p < filt_opts.hwe_alpha:
+            if hwe_p < filt_opts.alpha:
                 continue
         # Process remaining sites
         site = SumstatsSite(locid, locol, chrom, bp, popid, p_freq, hwe_p, priv)
@@ -352,7 +352,7 @@ def sample_kept_sites(locus_dict, n_sites, outd='./', single_snp=False):
             print(f'    Exported {n_sites:,} total sites to the whitelist.')
         # When exporting multiple SNPs per locus:
         else:
-            print('Exporting sites (more than one variant sites can be exported perlocus)...')
+            print('Exporting sites (more than one variant sites can be exported per locus)...')
             # Make a new list of SNP ids, regardless of locus
             snps = list()
             for loc in sorted(locus_dict):
